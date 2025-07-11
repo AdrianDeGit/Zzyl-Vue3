@@ -59,7 +59,7 @@
 
     <el-table v-loading="loading" :data="levelList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="id" />
+      <el-table-column label="编号" align="center" prop="id" />
       <el-table-column label="等级名称" align="center" prop="name" />
       <el-table-column label="护理计划ID" align="center" prop="lplanId" />
       <el-table-column label="护理费用" align="center" prop="fee" />
