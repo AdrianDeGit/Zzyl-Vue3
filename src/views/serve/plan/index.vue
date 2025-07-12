@@ -38,7 +38,6 @@
     </el-row>
 
     <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id"/>
       <el-table-column label="名称" align="center" prop="planName"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -54,7 +53,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="200">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="320">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['serve:plan:edit']">
             修改
@@ -62,7 +61,7 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['serve:plan:remove']">删除
           </el-button>
-          <el-button link type="primary" icon="Query" @click="handleDelete(scope.row)"
+          <el-button link type="primary" icon="Search" @click="queryParams(scope.row)"
                      v-hasPermi="['serve:plan:query']">查看
           </el-button>
           <el-button link type="primary" :icon="scope.row.status === 0 ? 'Lock' : 'Unlock'"
