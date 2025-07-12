@@ -61,7 +61,7 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['serve:plan:remove']">删除
           </el-button>
-          <el-button link type="primary" icon="Search" @click="queryParams(scope.row)"
+          <el-button link type="primary" icon="Search" @click="handleView(scope.row)"
                      v-hasPermi="['serve:plan:query']">查看
           </el-button>
           <el-button link type="primary" :icon="scope.row.status === 0 ? 'Lock' : 'Unlock'"
@@ -83,19 +83,19 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="planRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="排序号" prop="sortNo">
-          <el-input v-model="form.sortNo" placeholder="请输入排序号"/>
+          <el-input v-model="form.sortNo" placeholder="请输入排序号" :disabled="isView" :class="{ 'view-mode': isView }"/>
         </el-form-item>
         <el-form-item label="名称" prop="planName">
-          <el-input v-model="form.planName" placeholder="请输入名称"/>
+          <el-input v-model="form.planName" placeholder="请输入名称" :disabled="isView" :class="{ 'view-mode': isView }"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
+          <el-input v-model="form.remark" placeholder="请输入备注" :disabled="isView" :class="{ 'view-mode': isView }"/>
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm" v-if="!isView">确 定</el-button>
+          <el-button @click="cancel">{{ isView ? '关 闭' : '取 消' }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -117,6 +117,7 @@ const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const title = ref("")
+const isView = ref(false)
 
 const data = reactive({
   form: {},
@@ -145,6 +146,7 @@ function getList() {
 function cancel() {
   open.value = false
   reset()
+  isView.value = false
 }
 
 // 表单重置
@@ -185,6 +187,7 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
+  isView.value = false
   open.value = true
   title.value = "添加护理计划"
 }
@@ -192,6 +195,7 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset()
+  isView.value = false
   const _id = row.id || ids.value
   getPlan(_id).then(response => {
     form.value = response.data
@@ -199,6 +203,20 @@ function handleUpdate(row) {
     title.value = "修改护理计划"
   })
 }
+
+/** 查看按钮操作 */
+function handleView(row) {
+  reset()
+  isView.value = true
+  const _id = row.id || ids.value
+  getPlan(_id).then(response => {
+    form.value = response.data
+    open.value = true
+    title.value = "查看护理计划"
+  })
+}
+
+
 
 /** 提交按钮 */
 function submitForm() {
@@ -279,3 +297,25 @@ function handleEnable(row) {
   });
 }
 </script>
+
+<style scoped>
+.view-mode :deep(.el-input__wrapper) {
+  background-color: #f5f7fa;
+  border-color: #e4e7ed;
+  color: #606266;
+}
+
+.view-mode :deep(.el-input__inner) {
+  color: #606266;
+  background-color: transparent;
+}
+
+.view-mode :deep(.el-input__wrapper:hover) {
+  border-color: #e4e7ed;
+}
+
+.view-mode :deep(.el-input__wrapper.is-focus) {
+  border-color: #e4e7ed;
+  box-shadow: none;
+}
+</style>
