@@ -90,19 +90,27 @@
           <el-input v-model="form.name" placeholder="请输入名称"/>
         </el-form-item>
         <el-form-item label="排序号" prop="orderNo">
-          <el-input v-model="form.orderNo" placeholder="请输入排序号"/>
+          <el-input-number v-model="form.orderNo" placeholder="请输入" :min="1" :max="20" />
         </el-form-item>
         <el-form-item label="单位" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位"/>
         </el-form-item>
         <el-form-item label="价格" prop="price">
-          <el-input v-model="form.price" placeholder="请输入价格"/>
+          <el-input-number v-model="form.price" placeholder="请输入" :min="1" :max="100" :step="1" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio v-for="dict in nursing_project_status"
+                      :key="dict.value"
+                      :label="dict.value"
+            >{{ dict.label}}</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="图片" prop="image">
           <image-upload v-model="form.image"/>
         </el-form-item>
         <el-form-item label="护理要求" prop="nursingRequirement">
-          <el-input v-model="form.nursingRequirement" placeholder="请输入护理要求"/>
+          <el-input v-model="form.nursingRequirement" placeholder="请输入护理要求"  type="textarea"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
