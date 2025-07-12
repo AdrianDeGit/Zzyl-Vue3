@@ -3,11 +3,16 @@
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="名称" prop="planName">
         <el-input
-          v-model="queryParams.planName"
-          placeholder="请输入名称"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.planName"
+            placeholder="请输入护理计划名称"
+            clearable
+            @keyup.enter="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择" clearable>
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -15,85 +20,73 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <el-row :gutter="10" class="mb8" type="flex" justify="end">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['serve:plan:add']"
-        >新增</el-button>
+            type="primary"
+            plain
+            icon="Plus"
+            @click="handleAdd"
+            v-hasPermi="['serve:plan:add']"
+        >新增护理计划
+        </el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['serve:plan:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['serve:plan:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="Download"
-          @click="handleExport"
-          v-hasPermi="['serve:plan:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="名称" align="center" prop="planName" />
-      <el-table-column label="状态 0禁用 1启用" align="center" prop="status" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="序号" align="center" prop="id"/>
+      <el-table-column label="名称" align="center" prop="planName"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template #default="scope">
-            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" align="center" prop="status">
+        <template #default="scope">
+          <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'">{{
+              scope.row.status === 1 ? '启用' : '禁用'
+            }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['serve:plan:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['serve:plan:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['serve:plan:edit']">
+            修改
+          </el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                     v-hasPermi="['serve:plan:remove']">删除
+          </el-button>
+          <el-button link type="primary" icon="Query" @click="handleDelete(scope.row)"
+                     v-hasPermi="['serve:plan:query']">查看
+          </el-button>
+          <el-button link type="primary" :icon="scope.row.status === 0 ? 'Lock' : 'Unlock'"
+                     @click="handleEnable(scope.row)">{{ scope.row.status === 0 ? '启用' : '禁用' }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
+        v-show="total>0"
+        :total="total"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        @pagination="getList"
     />
 
     <!-- 添加或修改护理计划对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="planRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="排序号" prop="sortNo">
-          <el-input v-model="form.sortNo" placeholder="请输入排序号" />
+          <el-input v-model="form.sortNo" placeholder="请输入排序号"/>
         </el-form-item>
         <el-form-item label="名称" prop="planName">
-          <el-input v-model="form.planName" placeholder="请输入名称" />
+          <el-input v-model="form.planName" placeholder="请输入名称"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -107,9 +100,10 @@
 </template>
 
 <script setup name="Plan">
-import { listPlan, getPlan, delPlan, addPlan, updatePlan } from "@/api/serve/plan"
+import {listPlan, getPlan, delPlan, addPlan, updatePlan} from "@/api/serve/plan"
+import {updateLevel} from "@/api/serve/level.js";
 
-const { proxy } = getCurrentInstance()
+const {proxy} = getCurrentInstance()
 
 const planList = ref([])
 const open = ref(false)
@@ -129,11 +123,10 @@ const data = reactive({
     planName: null,
     status: null,
   },
-  rules: {
-  }
+  rules: {}
 })
 
-const { queryParams, form, rules } = toRefs(data)
+const {queryParams, form, rules} = toRefs(data)
 
 /** 查询护理计划列表 */
 function getList() {
@@ -228,12 +221,13 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value
-  proxy.$modal.confirm('是否确认删除护理计划编号为"' + _ids + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除护理计划序号为"' + _ids + '"的数据项？').then(function () {
     return delPlan(_ids)
   }).then(() => {
     getList()
     proxy.$modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  }).catch(() => {
+  })
 }
 
 /** 导出按钮操作 */
@@ -244,4 +238,38 @@ function handleExport() {
 }
 
 getList()
+
+//下拉选择框的选择项
+const options = ref([
+  {
+    value: 1,
+    label: "启用"
+  },
+  {
+    value: 0,
+    label: "停用"
+  }
+])
+
+/* 启用禁用按钮操作 */
+function handleEnable(row) {
+  // 获取当前状态
+  const status = row.status;
+  // 提示信息
+  const msg = status === 1 ? '禁用' : '启用';
+
+  // 构建参数
+  const params = {
+    id: row.id,
+    status: status === 1 ? 0 : 1
+  };
+
+  proxy.$modal.confirm(`是否确认${msg}该护理计划的数据项？`).then(function () {
+    return updateLevel(params);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess(`${msg}成功`);
+  }).catch(() => {
+  });
+}
 </script>
