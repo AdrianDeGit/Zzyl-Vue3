@@ -4,14 +4,18 @@
       <el-form-item label="名称" prop="planName">
         <el-input
             v-model="queryParams.planName"
-            placeholder="请输入护理计划名称"
+            placeholder="请输入"
             clearable
             @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择" clearable>
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
+          <el-option
+              v-for="item in nursing_plan_status"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -240,16 +244,19 @@ function handleExport() {
 getList()
 
 //下拉选择框的选择项
-const options = ref([
-  {
-    value: 1,
-    label: "启用"
-  },
-  {
-    value: 0,
-    label: "停用"
-  }
-])
+// const options = ref([
+//   {
+//     value: 1,
+//     label: "启用"
+//   },
+//   {
+//     value: 0,
+//     label: "停用"
+//   }
+// ])
+
+//引用数据字典，定义的变量名称必须和字典类型保持一致
+const { nursing_plan_status } = proxy.useDict("nursing_plan_status");
 
 /* 启用禁用按钮操作 */
 function handleEnable(row) {
