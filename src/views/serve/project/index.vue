@@ -15,7 +15,7 @@
               v-for="item in nursing_project_status"
               :key="item.value"
               :label="item.label"
-              :value="item.value" />
+              :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -70,7 +70,9 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['serve:project:remove']">删除
           </el-button>
-          <el-button link type="primary" :icon="scope.row.status === 0 ? 'Lock' : 'Unlock'" @click="handleEnable(scope.row)" >{{ scope.row.status === 0 ? '启用' : '禁用' }}</el-button>
+          <el-button link type="primary" :icon="scope.row.status === 0 ? 'Lock' : 'Unlock'"
+                     @click="handleEnable(scope.row)">{{ scope.row.status === 0 ? '启用' : '禁用' }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -90,27 +92,28 @@
           <el-input v-model="form.name" placeholder="请输入名称"/>
         </el-form-item>
         <el-form-item label="排序号" prop="orderNo">
-          <el-input-number v-model="form.orderNo" placeholder="请输入" :min="1" :max="20" />
+          <el-input-number v-model="form.orderNo" placeholder="请输入" :min="1" :max="20"/>
         </el-form-item>
         <el-form-item label="单位" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位"/>
         </el-form-item>
         <el-form-item label="价格" prop="price">
-          <el-input-number v-model="form.price" placeholder="请输入" :min="1" :max="100" :step="1" />
+          <el-input-number v-model="form.price" placeholder="请输入" :min="1" :max="100" :step="1"/>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio v-for="dict in nursing_project_status"
                       :key="dict.value"
                       :label="dict.value"
-            >{{ dict.label}}</el-radio>
+            >{{ dict.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="图片" prop="image">
           <image-upload v-model="form.image"/>
         </el-form-item>
         <el-form-item label="护理要求" prop="nursingRequirement">
-          <el-input v-model="form.nursingRequirement" placeholder="请输入护理要求"  type="textarea"/>
+          <el-input v-model="form.nursingRequirement" placeholder="请输入护理要求" type="textarea"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
@@ -226,6 +229,7 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getProject(_id).then(response => {
     form.value = response.data
+    form.value.status = String(form.value.status)
     open.value = true
     title.value = "修改护理项目"
   })
@@ -286,7 +290,7 @@ getList()
 // ])
 
 //引用数据字典，定义的变量名称必须和字典类型保持一致
-const { nursing_project_status } = proxy.useDict("nursing_project_status");
+const {nursing_project_status} = proxy.useDict("nursing_project_status");
 
 /* 启用禁用按钮操作 */
 function handleEnable(row) {
@@ -301,11 +305,12 @@ function handleEnable(row) {
     status: status === 1 ? 0 : 1
   };
 
-  proxy.$modal.confirm(`是否确认${msg}该护理项目的数据项？`).then(function() {
+  proxy.$modal.confirm(`是否确认${msg}该护理项目的数据项？`).then(function () {
     return updateProject(params);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess(`${msg}成功`);
-  }).catch(() => {});
+  }).catch(() => {
+  });
 }
 </script>
