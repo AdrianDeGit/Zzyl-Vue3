@@ -104,7 +104,6 @@
 
 <script setup name="Plan">
 import {listPlan, getPlan, delPlan, addPlan, updatePlan} from "@/api/serve/plan"
-import {updateLevel} from "@/api/serve/level.js";
 
 const {proxy} = getCurrentInstance()
 
@@ -289,7 +288,7 @@ function handleEnable(row) {
   };
 
   proxy.$modal.confirm(`是否确认${msg}该护理计划的数据项？`).then(function () {
-    return updateLevel(params);
+    return updatePlan(params);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess(`${msg}成功`);
