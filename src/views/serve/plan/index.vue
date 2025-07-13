@@ -127,7 +127,7 @@
 
     <!-- //////////////////////////////// -->
     <el-dialog
-        title="新增护理计划"
+        :title="title"
         v-model="dialogVisible"
         width="840"
         @close="cancel()"
@@ -378,6 +378,8 @@ function cancel() {
   dialogVisible.value = false;
   isLook.value = false;
   reset();
+  // 清除表单校验状态
+  proxy.$refs['planRef']?.clearValidate();
 }
 
 // 表单重置
@@ -396,7 +398,10 @@ function reset() {
     },
   ];
   console.log(nursingPlanList.value);
-  // proxy.resetForm('planRef');
+  // 重置表单校验状态
+  proxy.resetForm('planRef');
+  // 清除所有校验状态
+  proxy.$refs['planRef']?.clearValidate();
 }
 
 /** 搜索按钮操作 */
@@ -420,8 +425,9 @@ function handleSelectionChange(selection) {
 
 /** 新增按钮操作 */
 function handleAdd() {
+  reset(); // 先重置表单
   dialogVisible.value = true;
-  title.value = '添加护理计划';
+  title.value = '新增护理计划';
 }
 /** 修改按钮操作 */
 function handleUpdate(row) {
@@ -435,7 +441,8 @@ const getDetails = (id) => {
     formData.value.status = String(formData.value.status);
     nursingPlanList.value = formData.value.projectPlans;
     dialogVisible.value = true;
-    title.value = '修改护理计划';
+    // 根据是否为查看模式设置标题
+    title.value = isLook.value ? '查看护理计划' : '修改护理计划';
   });
 };
 /** 提交按钮 */
@@ -482,7 +489,7 @@ function hasDuplicateIds(objectsArray) {
   for (const obj of objectsArray) {
     // 假设每个对象都有一个id属性
     if (obj.projectId !== undefined) {
-      // 尝试将id添加到Set中
+      // 尝试将id新增到Set中
       idSet.add(obj.projectId);
     }
   }
@@ -552,6 +559,7 @@ const textBlurNo = () => {
 const handleLook = (row) => {
   isLook.value = true;
   dialogVisible.value = true;
+  title.value = '查看护理计划';
   getDetails(row.id);
 };
 getNursingPlanList();
