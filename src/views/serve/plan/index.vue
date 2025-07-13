@@ -426,6 +426,8 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset(); // 先重置表单
+  // 重新获取护理项目列表，确保选项是最新的
+  getAllProjectList();
   dialogVisible.value = true;
   title.value = '新增护理计划';
 }
@@ -436,6 +438,8 @@ function handleUpdate(row) {
 }
 // 获取详情
 const getDetails = (id) => {
+  // 先获取护理项目列表，确保选项是最新的
+  getAllProjectList();
   getPlan(id).then((response) => {
     formData.value = response.data;
     formData.value.status = String(formData.value.status);
