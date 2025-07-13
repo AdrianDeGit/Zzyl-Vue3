@@ -71,10 +71,10 @@ $--color-info: #909399;
   --sidebar-bg: #{$menuBg};
   --sidebar-text: #{$menuText};
   --menu-hover: #{$menuHover};
-  
+
   --navbar-bg: #ffffff;
   --navbar-text: #303133;
-  
+
   /* splitpanes default-theme 变量 */
   --splitpanes-default-bg: #ffffff;
 
@@ -119,18 +119,28 @@ html.dark {
   --blockquote-bg: #1d1e1f;
   --blockquote-border: #303030;
   --blockquote-text: #d0d0d0;
-  
+
   /* Cron 时间表达式 模式变量 */
   --cron-border: #303030;
 
   /* splitpanes default-theme 暗黑模式变量 */
   --splitpanes-default-bg: #141414;
 
+  /* Plan 页面暗黑模式变量 */
+  --plan-table-head-bg: #1d1e1f;
+  --plan-table-head-text: #d0d0d0;
+  --plan-table-border: #303030;
+  --plan-icon-add-color: #409eff;
+  --plan-icon-delete-color: #f56c6c;
+
   /* 侧边栏菜单覆盖 */
-   .sidebar-container {
-    .el-menu-item, .menu-title {
+  .sidebar-container {
+
+    .el-menu-item,
+    .menu-title {
       color: var(--el-text-color-regular);
     }
+
     & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
     & .theme-dark .el-sub-menu .el-menu-item {
       background-color: var(--el-bg-color) !important;
@@ -141,6 +151,7 @@ html.dark {
   .el-menu--horizontal {
     .el-menu-item {
       &:not(.is-disabled) {
+
         &:hover,
         &:focus {
           background-color: var(--navbar-hover) !important;
@@ -180,7 +191,8 @@ html.dark {
     --el-table-border-color: var(--el-border-color-light) !important;
     --el-table-row-hover-bg-color: var(--el-bg-color-overlay) !important;
 
-    .el-table__header-wrapper, .el-table__fixed-header-wrapper {
+    .el-table__header-wrapper,
+    .el-table__fixed-header-wrapper {
       th {
         background-color: var(--el-bg-color-overlay, #f8f8f9) !important;
         color: var(--el-text-color-regular, #515a6e);
@@ -190,7 +202,7 @@ html.dark {
 
   /* 树组件高亮样式覆盖 */
   .el-tree {
-    .el-tree-node.is-current > .el-tree-node__content {
+    .el-tree-node.is-current>.el-tree-node__content {
       background-color: var(--el-bg-color-overlay) !important;
       color: var(--el-color-primary);
     }
@@ -199,9 +211,10 @@ html.dark {
       background-color: var(--el-bg-color-overlay);
     }
   }
-  
+
   /* 下拉菜单样式覆盖 */
-  .el-dropdown-menu__item:not(.is-disabled):focus, .el-dropdown-menu__item:not(.is-disabled):hover{
+  .el-dropdown-menu__item:not(.is-disabled):focus,
+  .el-dropdown-menu__item:not(.is-disabled):hover {
     background-color: var(--navbar-hover) !important;
   }
 
@@ -211,7 +224,7 @@ html.dark {
     border-left-color: var(--blockquote-border) !important;
     color: var(--blockquote-text) !important;
   }
-  
+
   /* 时间表达式标题样式覆盖 */
   .popup-result .title {
     background: var(--cron-border);
@@ -219,3 +232,55 @@ html.dark {
 
 }
 
+// Plan 页面自定义变量（追加到文件末尾）
+:root {
+  /* Plan 页面亮色模式变量 */
+  --plan-table-head-bg: #f3f8f9;
+  --plan-table-head-text: #303133;
+  --plan-table-border: #dcdfe6;
+  --plan-icon-add-color: #409eff;
+  --plan-icon-delete-color: #f56c6c;
+}
+
+// Plan 页面 Sass 变量
+$color-main: #409eff; // 主色调
+$plan-table-head-bg: #f3f8f9;
+$plan-table-head-text: #303133;
+$plan-table-border: #dcdfe6;
+$plan-icon-add-color: #409eff;
+$plan-icon-delete-color: #f56c6c;
+
+// 导出 plan 页面变量
+:export {
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+  menuLightBg: $menuLightBg;
+  menuLightHover: $menuLightHover;
+  menuLightText: $menuLightText;
+  menuLightActiveText: $menuLightActiveText;
+  sideBarWidth: $sideBarWidth;
+  // 导出基础颜色
+  blue: $blue;
+  lightBlue: $light-blue;
+  red: $red;
+  pink: $pink;
+  green: $green;
+  tiffany: $tiffany;
+  yellow: $yellow;
+  panGreen: $panGreen;
+  // 导出组件颜色
+  colorPrimary: $--color-primary;
+  colorSuccess: $--color-success;
+  colorWarning: $--color-warning;
+  colorDanger: $--color-danger;
+  colorInfo: $--color-info;
+  // 导出 plan 页面变量
+  colorMain: $color-main;
+  planTableHeadBg: $plan-table-head-bg;
+  planTableHeadText: $plan-table-head-text;
+  planTableBorder: $plan-table-border;
+  planIconAddColor: $plan-icon-add-color;
+  planIconDeleteColor: $plan-icon-delete-color;
+}

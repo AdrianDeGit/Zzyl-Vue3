@@ -1,0 +1,118 @@
+@use '@/assets/styles/variables.module.scss' as variables;
+
+// 信息提示区域样式定义
+.info {
+
+  // 搜索PDF按钮样式
+  .searchPdf {
+    color: variables.$color-main;
+  }
+}
+
+// 文本居中样式
+.center {
+  text-align: center;
+}
+
+// 家属信息表格样式定义
+.family {
+
+  // 表头样式
+  .tableHead {
+    display: flex;
+    background-color: variables.$plan-table-head-bg;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    justify-content: center;
+    padding: 0 10px;
+    text-align: center;
+    color: variables.$plan-table-head-text;
+    border-bottom: 1px solid variables.$plan-table-border;
+
+    &>div {
+      flex: 1;
+    }
+  }
+
+  // 表体样式
+  .tableBody {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid variables.$plan-table-border;
+
+    .tableColumn {
+      display: flex;
+      justify-content: space-around;
+      height: 50px;
+      line-height: 50px;
+      border-bottom: 1px solid variables.$plan-table-border;
+
+      &:hover {
+        background-color: #f5f7fa;
+      }
+
+      .column {
+        flex: 1;
+        text-align: center;
+        padding: 0 10px;
+
+        .el-icon {
+          font-size: 16px;
+          margin: 0 5px;
+          cursor: pointer;
+
+          &.add {
+            color: variables.$plan-icon-add-color;
+
+            &:hover {
+              opacity: 0.8;
+            }
+          }
+
+          &.delect {
+            color: variables.$plan-icon-delete-color;
+
+            &:hover {
+              opacity: 0.8;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 表单布局样式
+.elcolFlex {
+  display: flex !important;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  .el-form-item {
+    width: 50%;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .elcolFlex {
+    .el-form-item {
+      width: 100%;
+    }
+  }
+
+  .family {
+
+    .tableHead,
+    .tableBody .tableColumn {
+      flex-direction: column;
+      height: auto;
+      min-height: 50px;
+
+      &>div {
+        padding: 8px 10px;
+      }
+    }
+  }
+}

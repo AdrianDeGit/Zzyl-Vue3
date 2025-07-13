@@ -4,13 +4,13 @@
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入"
+          placeholder="请输入名称"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择" clearable>
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
               v-for="item in nursing_level_status"
               :key="item.value"
