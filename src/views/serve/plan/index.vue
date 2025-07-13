@@ -38,7 +38,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange">
-      <el-table-column label="序号" align="center" prop="id"/>
+      <el-table-column label="序号" type="index" align="center" width="50"/>
       <el-table-column label="名称" align="center" prop="planName"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template #default="scope">

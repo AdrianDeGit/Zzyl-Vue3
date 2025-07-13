@@ -37,7 +37,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="levelList" @selection-change="handleSelectionChange">
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" type="index" align="center" width="50" />
       <el-table-column label="护理等级名称" align="center" prop="name" />
       <el-table-column label="执行护理计划" align="center" prop="lplanId" />
       <el-table-column label="护理费用(元/月)" align="center" prop="fee" />
