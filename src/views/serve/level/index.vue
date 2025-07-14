@@ -71,18 +71,41 @@
 
     <!-- 添加或修改护理等级对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="levelRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="等级名称" prop="name">
+      <el-form ref="levelRef" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="等级名称" prop="name" required>
           <el-input v-model="form.name" placeholder="请输入等级名称" />
         </el-form-item>
-        <el-form-item label="护理计划ID" prop="lplanId">
-          <el-input v-model="form.lplanId" placeholder="请输入护理计划ID" />
+        <el-form-item label="护理计划" prop="lplanId" required>
+          <el-select
+            v-model="form.lplanId"
+            filterable
+            clearable
+            placeholder="请选择护理计划"
+          >
+            <el-option
+              v-for="item in planOptions"
+              :key="item.id"
+              :label="item.planName"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="护理费用" prop="fee">
-          <el-input v-model="form.fee" placeholder="请输入护理费用" />
+        <el-form-item label="护理费用" prop="fee" required>
+          <el-input-number
+            v-model="form.fee"
+            :min="0"
+            :step="1"
+            placeholder="请输入"
+          />
         </el-form-item>
-        <el-form-item label="等级说明" prop="description">
-          <el-input v-model="form.description" placeholder="请输入等级说明" />
+        <el-form-item label="状态" prop="status" required>
+          <el-radio-group v-model="form.status">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="0">禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="等级说明" prop="description" required>
+          <el-input v-model="form.description" placeholder="请输入等级说明" type="textarea" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -100,6 +123,7 @@
 
 <script setup name="Level">
 import { listLevel, getLevel, delLevel, addLevel, updateLevel } from "@/api/serve/level"
+import { listPlan } from "@/api/serve/plan";
 
 const { proxy } = getCurrentInstance()
 
@@ -112,9 +136,17 @@ const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const title = ref("")
+const planOptions = ref([]);
 
 const data = reactive({
-  form: {},
+  form: {
+    name: null,
+    lplanId: null,
+    fee: null,
+    status: 1,
+    description: null,
+    remark: null
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -122,10 +154,24 @@ const data = reactive({
     status: null,
   },
   rules: {
+    name: [{ required: true, message: '请输入等级名称', trigger: 'blur' }],
+    lplanId: [{ required: true, message: '请选择护理计划', trigger: 'change' }],
+    fee: [
+      { required: true, message: '请输入护理费用', trigger: 'blur' },
+      { type: 'number', min: 0, message: '护理费用不能小于0', trigger: 'blur' }
+    ],
+    status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+    description: [{ required: true, message: '请输入等级说明', trigger: 'blur' }]
   }
 })
 
 const { queryParams, form, rules } = toRefs(data)
+
+function fetchPlanOptions() {
+  listPlan({ pageNum: 1, pageSize: 1000 }).then(res => {
+    planOptions.value = res.rows || [];
+  });
+}
 
 /** 查询护理等级列表 */
 function getList() {
@@ -146,18 +192,14 @@ function cancel() {
 // 表单重置
 function reset() {
   form.value = {
-    id: null,
     name: null,
     lplanId: null,
     fee: null,
-    status: null,
+    status: 1,
     description: null,
-    createTime: null,
-    createBy: null,
-    updateBy: null,
-    remark: null,
-    updateTime: null
+    remark: null
   }
+  fetchPlanOptions();
   proxy.resetForm("levelRef")
 }
 
@@ -182,20 +224,22 @@ function handleSelectionChange(selection) {
 
 /** 新增按钮操作 */
 function handleAdd() {
-  reset()
-  open.value = true
-  title.value = "添加护理等级"
+  reset();
+  fetchPlanOptions();
+  open.value = true;
+  title.value = "添加护理等级";
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  reset()
-  const _id = row.id || ids.value
+  reset();
+  fetchPlanOptions();
+  const _id = row.id || ids.value;
   getLevel(_id).then(response => {
-    form.value = response.data
-    open.value = true
-    title.value = "修改护理等级"
-  })
+    form.value = response.data;
+    open.value = true;
+    title.value = "修改护理等级";
+  });
 }
 
 /** 提交按钮 */
@@ -239,18 +283,6 @@ function handleExport() {
 
 getList()
 
-//下拉选择框的选择项
-// const options = ref([
-//   {
-//     value: 1,
-//     label: "启用"
-//   },
-//   {
-//     value: 0,
-//     label: "停用"
-//   }
-// ])
-
 //引用数据字典，定义的变量名称必须和字典类型保持一致
 const { nursing_level_status } = proxy.useDict("nursing_level_status");
 
@@ -275,3 +307,6 @@ function handleEnable(row) {
   }).catch(() => {});
 }
 </script>
+
+<style scoped>
+</style>
